@@ -76,7 +76,8 @@ class Parser:
             word = word[:-1]
         return word
     
-WAIT_TIME_SECONDS = 5
+DAY_TO_SECONDS = 86400
+WAIT_TIME_SECONDS = 60
 
 class ProgramKilled(Exception):
     pass
@@ -101,21 +102,20 @@ class Job(threading.Thread):
             while not self.stopped.wait(self.interval.total_seconds()):
                 self.execute(*self.args, **self.kwargs)
 
-  
-if __name__ == "__main__":
+"""
     parser = Parser()
-    # signal.signal(signal.SIGTERM, signal_handler)
-    # signal.signal(signal.SIGINT, signal_handler)
-    # job = Job(interval=timedelta(seconds=WAIT_TIME_SECONDS), execute=parser.make_request)
-    # job.start()
-    
-    # while True:
-    #       try:
-    #           time.sleep(1)
-    #           print('here')
-    #       except (ProgramKilled,KeyboardInterrupt, SystemExit):
-    #           print("Program killed: running cleanup code")
-    #           job.stop()
-    #           break
-    parser.make_request()
+    signal.signal(signal.SIGTERM, signal_handler)
+    signal.signal(signal.SIGINT, signal_handler)
+    job = Job(interval=timedelta(seconds=WAIT_TIME_SECONDS), execute=parser.make_request)
+    job.start()
 
+    while True:
+          try:
+              time.sleep(1)
+              print('here')
+          except (ProgramKilled,KeyboardInterrupt, SystemExit):
+              print("Program killed: running cleanup code")
+              job.stop()
+              break
+
+"""
