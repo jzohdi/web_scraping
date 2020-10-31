@@ -7,6 +7,14 @@ import random
 import time
 import json
 
+"""
+    This class shows an example of scraping search engines.
+    Important feature are using:
+    - proxy
+    - setting headers 
+    - on a random timer to mimic human usage
+
+"""
 
 class Parser:
     def __init__(self):

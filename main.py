@@ -1,15 +1,34 @@
-from scrapers.ecotourisme import Scraper
-from scrapers.helpers.writer import XLWriter
+import os
+from private.ecotourisme import Scraper
+from helpers.writer import XLWriter
+from dotenv import load_dotenv
+from pathlib import Path  # Python 3.6+ only
+
+load_dotenv()
+
+# OR, the same with increased verbosity
+load_dotenv(verbose=True)
+
+# OR, explicitly providing path to '.env'
+env_path = Path('.') / '.env'
+load_dotenv(dotenv_path=env_path)
 
 def main():
     cols = ["name", "owner", "address", "phone", "contact", "details"]
+    output_filename = "eco_tourisme_2.xlsx"
+    endpoint = os.getenv("URL")
+
+    if endpoint is None:
+        print("endpoint url is None")
+
+        exit(1)
+
     xl_writer = XLWriter()
-    
-    scraper = Scraper("https://www.ecotourisme-pays-alo.com/vos-vacances-chez-nous/h%C3%A9bergements/")
+    scraper = Scraper(endpoint)
     data = scraper.run()
     
     
-    xl_writer.create("eco_tourisme_2.xlsx")
+    xl_writer.create(output_filename)
     xl_writer.init_sheet()
     xl_writer.batch_add_row(data)
     # xl_writer.new_sheet(cols)
