@@ -4,7 +4,11 @@ I often do webscraping projects for personal project, to help friends, and for f
 
 I will include any scraper classes that I don't mind sharing but will keep certain scrapers private.
 
-The main entry point
+The main entry point is `main.py` where can see the example of running the scraper and writing the data out to `.xlsx`.
+In `helpers/`:
+
+- `base_scraper.py` - the scraping base class. Shows that you need to implement to `parse_soup` method, which will be unique for different domains.
+- `writer.py` - class and interface for writing data out to a file.
 
 ## Installation
 
