@@ -2,36 +2,35 @@
 """
 Created on Mon Mar 18 16:24:47 2019
 
-@author: jakez
+@author: jzohdi
+
+this is meant to query the wiki quote random url and scrape all quotes from
+that page.
+
+to start call .run()
+returns [...quote]
+
 """
 
 from bs4 import BeautifulSoup
 from requests import get
 from random import shuffle
 import threading, time, signal
-
 from datetime import timedelta
-class Parser:
-    def __init__(self):
-        self.url = 'https://en.wikiquote.org/wiki/Special:Random'
+from ..helpers.base_scraper import BaseScraper
+
+class Scraper(BaseScraper):
+    def __init__(self, base_url):
+        super().__init__(base_url)
+        self.url = base_url
         self.title = None
         self.status = None
-        self.all_quotes = []
-        
-    def make_request(self):
-        response = get(self.url)
-        if response.status_code == 200:
-            self.build_quotes(response)
-        else:
-            return False
-        
-    def build_quotes(self, response):
-        self.status = 200
-        content = response.content
-        soup = BeautifulSoup(content, 'html.parser')
+        self.all_quotes = []    
+
+    def parse_soup(self, soup):
         self.title = ' '.join(soup.find('title').get_text().split('-')[:-1])
         self.get_quotes_and_author(soup)
-
+    
     def get_quotes_and_author(self, soup):
         if self.status != 200:
             return None
@@ -53,11 +52,8 @@ class Parser:
                               'quote' : this_quote.strip().replace('  ', ' ')}
                 
                 self.all_quotes.append(quote_dict)
-                
-        if len(self.all_quotes) == 0:
-            self.make_request()
-        else:
-            print(self.all_quotes)
+        
+        return self.all_quotes
             
     def scrub_title_and_author(self, text, author):
         title_to_list = self.title.split(" ")
@@ -74,8 +70,12 @@ class Parser:
             word = word[1:]
         if word.endswith('"') or word.endswith("'"):
             word = word[:-1]
-        return word
+        return word    
     
+
+""" 
+    Job class used to run multiple threads at once.
+"""
 DAY_TO_SECONDS = 86400
 WAIT_TIME_SECONDS = 60
 

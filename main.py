@@ -1,8 +1,12 @@
 import os
-from private.ecotourisme import Scraper
-from helpers.writer import XLWriter
+from helpers.writer import XLWriter, XLWriterInterface
+from helpers.base_scraper import BaseScraper
 from dotenv import load_dotenv
 from pathlib import Path  # Python 3.6+ only
+# import the desired scraper
+from private.ecotourisme import Scraper
+# from public.airbnb_calender_scraper import Scraper
+# from public.wiki_quote import Scraper
 
 load_dotenv()
 
@@ -23,10 +27,12 @@ def main():
 
         exit(1)
 
-    xl_writer = XLWriter()
-    scraper = Scraper(endpoint)
+    xl_writer: XLWriterInterface = XLWriter()
+    scraper: BaseScraper = Scraper(endpoint)
     data = scraper.run()
     
+    # handle writing out with the appropiate method 
+    # (based on the data returned by scraper.run() )
     
     xl_writer.create(output_filename)
     xl_writer.init_sheet()
